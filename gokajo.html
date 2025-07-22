@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI家訓：夢と魔法の五箇条</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+P+One&family=Kosugi+Maru&family=DotGothic16&display=swap" rel="stylesheet">
+    <style>
+        body {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path fill="%23FFC107" d="M16 0l-4 8-8 4 8 4 4 8 4-8 8-4-8-4z"/><path fill="%23FF9800" d="M16 13l-2.09 4.22-4.22 2.09 4.22 2.09L16 26l2.09-4.22 4.22-2.09-4.22-2.09z"/><rect x="0" y="14" width="12" height="4" fill="%23D2A679" transform="rotate(-45 8 16)"/></svg>'), auto;
+            font-family: 'Kosugi Maru', sans-serif;
+            background-color: #e0c3fc;
+            background-image: linear-gradient(135deg, #a0c4ff 0%, #d8b2ff 50%, #ffc0cb 100%);
+            color: #6a5d7b;
+            line-height: 1.7;
+            padding: 40px;
+            max-width: 750px;
+            margin: 50px auto;
+            border: 15px solid #ffffff;
+            border-radius: 47% 53% 70% 30% / 30% 46% 54% 70%;
+            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.5), 0 10px 40px rgba(100, 100, 150, 0.3);
+            text-align: center;
+            position: relative;
+            opacity: 0;
+            animation: fadeInBounce 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transition: border-radius 0.5s ease-in-out;
+        }
+        body:hover {
+            border-radius: 39% 61% 47% 53% / 59% 30% 70% 41%;
+        }
+
+        @keyframes fadeInBounce {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .content-wrapper {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 41% 59% 63% 37% / 55% 44% 56% 45%;
+            padding: 2.5em;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: border-radius 0.5s ease-in-out;
+            perspective: 1200px;
+        }
+        body:hover .content-wrapper {
+            border-radius: 63% 37% 31% 69% / 46% 59% 41% 54%;
+        }
+
+        h1 {
+            font-family: 'Mochiy Pop P One', cursive;
+            /* 1. フォントサイズを微調整して改行を防止 */
+            font-size: 2.9em; 
+            color: #ff8fab;
+            text-shadow:
+                -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff,
+                4px 4px 8px rgba(255, 139, 171, 0.3);
+            margin-top: 0;
+            margin-bottom: 0.8em;
+            letter-spacing: 0.08em;
+            animation: popIn 0.8s ease-out 0.4s forwards;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5); }
+            80% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        h1::before, h1::after { content: '🦋'; font-size: 0.7em; margin: 0 10px; vertical-align: middle; animation: flutter 1.5s ease-in-out infinite alternate; }
+        @keyframes flutter { from { transform: translateY(0px) rotate(-5deg); } to { transform: translateY(-10px) rotate(5deg); } }
+
+        .slogan {
+            font-family: 'Mochiy Pop P One', cursive;
+            font-size: 2.2em;
+            color: #a0c4ff;
+            text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 3px 3px 5px rgba(160, 196, 255, 0.5);
+            margin: -0.5em 0 2em;
+            animation: popIn 0.8s ease-out 0.6s forwards;
+        }
+
+        h2 {
+            font-family: 'Mochiy Pop P One', cursive;
+            font-size: 1.8em;
+            margin-bottom: 1.8em;
+            color: #ff7bac;
+            /* 2. text-shadowを調整して線の見え方を改善 */
+            text-shadow: 2px 2px 4px rgba(255, 123, 172, 0.4);
+            letter-spacing: 0.05em;
+            animation: popIn 0.8s ease-out 0.8s forwards;
+        }
+        h2::before, h2::after {
+    content: '💖';
+    font-size: 0.9em;
+    margin: 0 15px; /* 余白を広げて重なりを解消 */
+    vertical-align: middle;
+    animation: heartbeat 1s ease-in-out infinite alternate;
+}
+        @keyframes heartbeat { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+        .kakun-list { list-style: none; padding: 0; }
+        
+        .kakun-list li {
+            font-size: 1.1em;
+            margin: 0 auto 3em;
+            width: 90%;
+            max-width: 550px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e6e6fa;
+            border-radius: 40% 60% 70% 30% / 30% 50% 50% 70%;
+            padding: 2.5em;
+            box-shadow: 0 4px 15px rgba(100, 100, 150, 0.2);
+            line-height: 1.7;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform-style: preserve-3d;
+            animation: popUpBook 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .kakun-list li:nth-child(even) {
+            border-radius: 61% 39% 30% 70% / 54% 30% 70% 46%;
+        }
+        .kakun-list li:nth-child(3n) {
+            border-radius: 33% 67% 58% 42% / 63% 49% 51% 37%;
+        }
+        
+        .kakun-list li:nth-child(1) { animation-delay: 1.0s; }
+        .kakun-list li:nth-child(2) { animation-delay: 1.2s; }
+        .kakun-list li:nth-child(3) { animation-delay: 1.4s; }
+        .kakun-list li:nth-child(4) { animation-delay: 1.6s; }
+        .kakun-list li:nth-child(5) { animation-delay: 1.8s; }
+
+        @keyframes popUpBook {
+             from {
+                 opacity: 0;
+                 transform: rotateX(80deg) scale(0.8);
+                 transform-origin: bottom center;
+             }
+             to {
+                 opacity: 1;
+                 transform: rotateX(0deg) scale(1);
+                 transform-origin: bottom center;
+             }
+        }
+        
+        .kakun-list li:hover {
+            transform: translateY(-10px) rotate(2deg) scale(1.03);
+            box-shadow: 0 12px 30px rgba(160, 196, 255, 0.6);
+            border-color: #fff;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+
+        .kakun-list li strong {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.6em;
+    color: #9c27b0;
+    background: none;
+    box-shadow: none;
+    display: block;
+    margin-bottom: 0.8em;
+    font-weight: normal;
+    
+}
+        .kakun-list li strong::before { 
+            content: '✨';
+            margin-right: 8px;
+            font-size: 1em; 
+            display: inline-block;
+            animation: sparkle-icon 2s ease-in-out infinite;
+            text-shadow: none;
+        }
+
+        @keyframes sparkle-icon {
+            0%, 100% { transform: scale(1); opacity: 1; filter: hue-rotate(0deg); }
+            50% { transform: scale(1.3); opacity: 0.7; filter: hue-rotate(180deg); }
+        }
+
+        .kakun-list li span { display: block; color: #6a5d7b; }
+
+        footer { margin-top: 50px; font-size: 1.1em; font-family: 'Mochiy Pop P One', cursive; color: #ff8fab; text-shadow: 1px 1px 3px rgba(255,255,255,0.7); animation: popIn 1s ease-out 2.2s forwards; padding-bottom: 0; }
+
+        @media (max-width: 768px) {
+            body { 
+                padding: 20px; 
+                border-width: 10px; 
+            }
+            .content-wrapper { 
+                padding: 1.5em; 
+                perspective: none; 
+            }
+            h1 { font-size: 2.2em; }
+            .slogan { font-size: 1.6em; }
+            h2 { font-size: 1.5em; }
+            .kakun-list li { 
+                padding: 1.5em; 
+                animation: popInSimple 0.7s ease-out forwards;
+            }
+            .kakun-list li strong { font-size: 1.3em; }
+            @keyframes popInSimple {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <h1>思考を拡張するAI活用法</h1>
+        <div class="slogan">AIは魔法の道具、心の光で世界を創ろう</div>
+        <h2>AIとの素敵な冒険へ 五つの約束</h2>
+        <ul class="kakun-list">
+            <li><strong>一、心の問いを大切に。</strong><span>何を知りたい？何を作りたい？心の声に耳を傾け、AIに魔法の問いをかけよう。</span></li>
+            <li><strong>二、答えを信じすぎず、確かめよう。</strong><span>AIの魔法は時々いたずら。自分の目で見て、確かめる冒険の心を忘れずに。</span></li>
+            <li><strong>三、自分だけの輝きを加えよう。</strong><span>AIがくれた宝石も、あなたの手で磨けばもっとキラキラ輝くよ。あなたらしさを忘れずに。</span></li>
+            <li><strong>四、新しい発見を探しに行こう。</strong><span>AIと一緒に、まだ誰も知らない秘密の道を見つけに行こう！応用と探求の旅は無限大。</span></li>
+            <li><strong>五、最後の決断は、あなたの勇気。</strong><span>AIは最高の案内人。でも、どの道を選ぶか、最後の扉を開くのは、いつもあなたの勇気だよ。</span></li>
+        </ul>
+        <footer><p>✨夢と想像力は、AIを動かす最高の魔法だよ✨</p></footer>
+    </div>
+</body>
+</html>
