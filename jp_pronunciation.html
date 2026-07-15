@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kana Pronunciation Checker</title>
+    <style>
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+            text-align: center;
+            padding: 10px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        .header-controls {
+            margin-bottom: 20px;
+        }
+        #toggle-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid #2196F3;
+            border-radius: 25px;
+            background-color: #2196F3;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #toggle-btn:active {
+            transform: scale(0.95);
+        }
+        h3 {
+            margin-top: 25px;
+            color: #555;
+            font-size: 18px;
+        }
+        /* 基本・濁音用：5列グリッド */
+        .grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        /* 拗音用：3列グリッド */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .section-divider {
+            margin: 20px auto;
+            max-width: 500px;
+            border: 0;
+            border-top: 2px dashed #ccc;
+        }
+        .kana-btn {
+            aspect-ratio: 1 / 1;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #fff;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .kana-btn:active {
+            background-color: #e0e0e0;
+            transform: translateY(2px);
+        }
+        .kana-btn.playing {
+            background-color: #ff9800;
+            color: white;
+        }
+        .empty-cell {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-controls">
+        <button id="toggle-btn" onclick="toggleKana()">Switch to Katakana</button>
+    </div>
+    
+    <h3>Standard (清音)</h3>
+    <div class="grid-5" id="main-container"></div>
+
+    <hr class="section-divider">
+
+    <h3>Voiced / Semi-voiced (濁音・半濁音)</h3>
+    <div class="grid-5" id="dakuon-container"></div>
+
+    <hr class="section-divider">
+
+    <h3>Contracted Sounds (拗音)</h3>
+    <div class="grid-3" id="youon-container"></div>
+
+    <script>
+        // 清音データ（5列）
+        const hiraganaMain = [
+            "あ", "い", "う", "え", "お",
+            "か", "き", "く", "け", "こ",
+            "さ", "し", "す", "せ", "そ",
+            "た", "ち", "つ", "て", "と",
+            "な", "ni", "ぬ", "ね", "の", // ※"に"の誤読を防ぐため一時的に"ni"にしていますが、マップで「に」に修正
+            "は", "ひ", "ふ", "へ", "ほ",
+            "ま", "み", "む", "め", "も",
+            "や", "", "ゆ", "", "よ",
+            "ら", "り", "る", "れ", "ろ",
+            "わ", "", "", "", "を",
+            "ん", "", "", "", ""
+        ];
+        // 表示用の「ni」を「に」にマッピング等で補正
+        hiraganaMain[11] = "に"; 
+
+        const katakanaMain = [
+            "ア", "イ", "ウ", "エ", "オ",
+            "カ", "キ", "ク", "ケ", "コ",
+            "サ", "シ", "ス", "セ", "ソ",
+            "タ", "チ", "ツ", "テ", "ト",
+            "ナ", "ニ", "ヌ", "ネ", "ノ",
+            "ハ", "ヒ", "フ", "ヘ", "ホ",
+            "マ", "ミ", "ム", "メ", "モ",
+            "ヤ", "", "ユ", "", "ヨ",
+            "ラ", "リ", "ル", "レ", "ロ",
+            "ワ", "", "", "", "ヲ",
+            "ン", "", "", "", ""
+        ];
+
+        // 濁音・半濁音データ（5列）
+        const hiraganaDaku = [
+            "が", "ぎ", "ぐ", "げ", "ご",
+            "ざ", "じ", "ず", "ぜ", "ぞ",
+            "だ", "ぢ", "づ", "de", "ど", // ※「で」の誤読対策
+            "ば", "び", "ぶ", "べ", "ぼ",
+            "ぱ", "p-i", "ぷ", "ぺ", "ぽ"  // ※「ぴ」の誤読対策
+        ];
+        hiraganaDaku[13] = "で";
+        hiraganaDaku[21] = "ぴ";
+
+        const katakanaDaku = [
+            "ガ", "ギ", "グ", "ゲ", "ゴ",
+            "ザ", "ジ", "ズ", "ゼ", "ゾ",
+            "ダ", "ヂ", "ヅ", "デ", "ド",
+            "バ", "ビ", "ブ", "ベ", "ボ",
+            "パ", "ピ", "プ", "ペ", "ポ"
+        ];
+
+        // 拗音データ（3列）
+        const hiraganaYou = [
+            "きゃ", "きゅ", "きょ",
+            "しゃ", "しゅ", "しょ",
+            "ちゃ", "ちゅ", "ちょ",
+            "にゃ", "にゅ", "にょ",
+            "ひゃ", "ひゅ", "ひょ",
+            "みゃ", "みゅ", "みょ",
+            "りゃ", "りゅ", "りょ",
+            "ぎゃ", "ぎゅ", "ぎょ",
+            "じゃ", "じゅ", "じょ",
+            "びゃ", "びゅ", "びょ",
+            "ぴゃ", "ぴゅ", "ぴょ"
+        ];
+
+        const katakanaYou = [
+            "キャ", "キュ", "キョ",
+            "シャ", "シュ", "ショ",
+            "チャ", "チュ", "チョ",
+            "ニャ", "ニュ", "ニョ",
+            "ヒャ", "ヒュ", "ヒョ",
+            "ミャ", "ミュ", "ミョ",
+            "リャ", "リュ", "リョ",
+            "ギャ", "ギュ", "ギョ",
+            "ジャ", "ジュ", "ジョ",
+            "ビャ", "ビュ", "ビョ",
+            "ピャ", "ピュ", "ピョ"
+        ];
+
+        // 特定のブラウザでの誤読を防ぐための高精度マッピング
+        const pronunciationMap = {
+            "は": "ハ", "へ": "ヘ",
+            "に": "ニ", "で": "デ", "ぴ": "ピ",
+            "を": "オ", "を": "ヲ"
+        };
+
+        let isHiraganaMode = true;
+        const mainContainer = document.getElementById('main-container');
+        const dakuonContainer = document.getElementById('dakuon-container');
+        const youonContainer = document.getElementById('youon-container');
+        const toggleBtn = document.getElementById('toggle-btn');
+        const synth = window.speechSynthesis;
+
+        function renderGrid(container, dataArray, is3Col = false) {
+            container.innerHTML = ''; 
+            dataArray.forEach(char => {
+                if (char === "") {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.className = 'empty-cell';
+                    container.appendChild(emptyDiv);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.className = 'kana-btn';
+                    btn.textContent = char;
+                    btn.onclick = () => speak(char, btn);
+                    container.appendChild(btn);
+                }
+            });
+        }
+
+        function updateUI() {
+            const currentMain = isHiraganaMode ? hiraganaMain : katakanaMain;
+            const currentDaku = isHiraganaMode ? hiraganaDaku : katakanaDaku;
+            const currentYou = isHiraganaMode ? hiraganaYou : katakanaYou;
+            
+            renderGrid(mainContainer, currentMain);
+            renderGrid(dakuonContainer, currentDaku);
+            renderGrid(youonContainer, currentYou, true);
+            
+            toggleBtn.textContent = isHiraganaMode ? "Switch to Katakana" : "Switch to Hiragana";
+            toggleBtn.style.backgroundColor = isHiraganaMode ? "#2196F3" : "#9C27B0";
+            toggleBtn.style.borderColor = isHiraganaMode ? "#2196F3" : "#9C27B0";
+        }
+
+        function toggleKana() {
+            isHiraganaMode = !isHiraganaMode;
+            updateUI();
+        }
+
+        function speak(text, buttonElement) {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+
+            const textToSpeak = pronunciationMap[text] || text;
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.85; 
+
+            utterance.onstart = () => {
+                buttonElement.classList.add('playing');
+            };
+            utterance.onend = () => {
+                buttonElement.classList.remove('playing');
+            };
+            utterance.onerror = () => {
+                buttonElement.classList.remove('playing');
+            };
+
+            synth.speak(utterance);
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
