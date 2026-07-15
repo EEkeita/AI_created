@@ -35,7 +35,7 @@
             color: #555;
             font-size: 18px;
         }
-        /* 基本・濁音用：5列グリッド */
+        /* 5列グリッド */
         .grid-5 {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -102,13 +102,13 @@
     <div class="grid-3" id="youon-container"></div>
 
     <script>
-        // 清音データ（5列）
+        // 清音データ（5列） - すべて最初から正しい日本語で定義
         const hiraganaMain = [
             "あ", "い", "う", "え", "お",
             "か", "き", "く", "け", "こ",
             "さ", "し", "す", "せ", "そ",
             "た", "ち", "つ", "て", "と",
-            "な", "ni", "ぬ", "ね", "の", // ※"に"の誤読を防ぐため一時的に"ni"にしていますが、マップで「に」に修正
+            "な", "に", "ぬ", "ね", "の",
             "は", "ひ", "ふ", "へ", "ほ",
             "ま", "み", "む", "め", "も",
             "や", "", "ゆ", "", "よ",
@@ -116,8 +116,6 @@
             "わ", "", "", "", "を",
             "ん", "", "", "", ""
         ];
-        // 表示用の「ni」を「に」にマッピング等で補正
-        hiraganaMain[11] = "に"; 
 
         const katakanaMain = [
             "ア", "イ", "ウ", "エ", "オ",
@@ -137,12 +135,10 @@
         const hiraganaDaku = [
             "が", "ぎ", "ぐ", "げ", "ご",
             "ざ", "じ", "ず", "ぜ", "ぞ",
-            "だ", "ぢ", "づ", "de", "ど", // ※「で」の誤読対策
+            "だ", "ぢ", "づ", "で", "ど",
             "ば", "び", "ぶ", "べ", "ぼ",
-            "ぱ", "p-i", "ぷ", "ぺ", "ぽ"  // ※「ぴ」の誤読対策
+            "ぱ", "ぴ", "ぷ", "ぺ", "ぽ"
         ];
-        hiraganaDaku[13] = "で";
-        hiraganaDaku[21] = "ぴ";
 
         const katakanaDaku = [
             "ガ", "ギ", "グ", "ゲ", "ゴ",
@@ -181,11 +177,12 @@
             "ピャ", "ピュ", "ピョ"
         ];
 
-        // 特定のブラウザでの誤読を防ぐための高精度マッピング
+        // 誤読を防ぐための高精度マッピング（表示文字 -> 強制発音用カタカナ）
+        // ブラウザやOS依存の読み上げバグは、この辞書だけで一括管理・吸収します
         const pronunciationMap = {
             "は": "ハ", "へ": "ヘ",
-            "に": "ニ", "で": "デ", "ぴ": "ピ",
-            "を": "オ", "を": "ヲ"
+            "に": "ニ", "で": "デ", "ぴ": "ピ", "し": "シ",
+            "を": "ヲ", "ほ": "ホ"
         };
 
         let isHiraganaMode = true;
@@ -195,7 +192,7 @@
         const toggleBtn = document.getElementById('toggle-btn');
         const synth = window.speechSynthesis;
 
-        function renderGrid(container, dataArray, is3Col = false) {
+        function renderGrid(container, dataArray) {
             container.innerHTML = ''; 
             dataArray.forEach(char => {
                 if (char === "") {
@@ -219,7 +216,7 @@
             
             renderGrid(mainContainer, currentMain);
             renderGrid(dakuonContainer, currentDaku);
-            renderGrid(youonContainer, currentYou, true);
+            renderGrid(youonContainer, currentYou);
             
             toggleBtn.textContent = isHiraganaMode ? "Switch to Katakana" : "Switch to Hiragana";
             toggleBtn.style.backgroundColor = isHiraganaMode ? "#2196F3" : "#9C27B0";
